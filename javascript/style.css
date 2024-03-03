@@ -1,0 +1,10 @@
+body{
+#shape {
+    width: 200px;
+    height: 200px;
+    background-color: red;
+    border-radius: 50%; /* Makes the shape a circle */
+    display: none; /* Added to initially hide the shape */
+    position: absolute; /* Added to position the shape */
+}
+}
