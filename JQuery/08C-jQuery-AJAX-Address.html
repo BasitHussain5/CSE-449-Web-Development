@@ -1,0 +1,43 @@
+<html>
+
+<head>
+
+    <title>AJAX</title>
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+
+</head>
+
+<body>
+    <h1>My Geocoder</h1>
+    <input type="text" id="searchText" />
+    <button id="searchButton">SEARCH</button>
+
+    <p id="searchResultsHeader"></p>
+    <p id="searchResults"></p>
+
+    <script type="text/javascript">
+        $("#searchButton").click(function() {
+            $.ajax("https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBYG8hqkzZlE5pxU_bU4d9OJlCbNcKqWh4&address=" + $("#searchText").val())
+                .done(function(data) {
+                    console.log('data received');
+                    console.log(data);
+                    if (data.results.length > 0) {
+                        $("#searchResultsHeader").html("The LAT/LONG for " + data.results[0].formatted_address + " is: ");
+                        $("#searchResults").html("LAT: " + data.results[0].geometry.location.lat + " LONG: " + data.results[0].geometry.location.lat);
+                    } else {
+                        $("#searchResultsHeader").html("- NO RESULTS FOUND -");
+                    }
+                })
+                .fail(function() {
+
+                    alert("Could not get data");
+
+                });
+        });
+
+    </script>
+
+</body>
+
+</html>

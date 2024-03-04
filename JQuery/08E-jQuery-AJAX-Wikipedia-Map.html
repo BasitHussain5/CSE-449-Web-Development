@@ -1,0 +1,141 @@
+<html>
+
+<head>
+
+    <title>AJAX Map</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+
+    </style>
+    <script type="text/javascript" src="jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>MapiPedia</h1>
+    <input type="text" id="searchText" />
+    <button id="searchButton">SEARCH</button>
+
+    <p id="searchResultsHeader"></p>
+    <div id="map"></div>
+    <p id="searchResults"></p>
+    <script type="text/javascript">
+        var map;
+        var bounds;
+        var markers;
+
+        function initMap() {
+            var uluru = {
+                lat: 32.3668,
+                lng: -86.3000
+            };
+            map = new google.maps.Map($("#map").get(0), {
+                zoom: 6,
+                center: uluru
+            });
+
+        }
+
+        //Code to bind click of search button
+        $("#searchButton").click(function() {
+            doSearch();
+        });
+
+        //Code to bind Enter key on text box to event
+        $("#searchText").keyup(function(e) {
+            if (e.keyCode == 13) {
+                $(this).trigger("enterKey");
+            }
+        });
+
+        //Code for Enter key on text box to auto search
+        $("#searchText").bind("enterKey", function(e) {
+            doSearch();
+        });
+
+        function doSearch() {
+
+            var searchVal = $("#searchText").val();
+            $.ajax({
+                    url: "https://en.wikipedia.org/w/api.php?format=jsonty&action=opensearch&search=" + encodeURIComponent(searchVal),
+                    data: {
+                        format: 'json'
+                    },
+                    dataType: 'jsonp'
+                }).done(function(data) {
+                    console.log('wikipedia data received');
+                    console.log(data);
+                    $("#searchResultsHeader").html("Results for '" + searchVal + "':");
+                    var results = "";
+                    bounds = new google.maps.LatLngBounds();
+                    clearMap();
+                    for (var i = 0; i < data[1].length; i++) {
+                        var latLong = getLatLong(data[1][i]);
+                        addMarker(latLong, data[1][i], data[3][i]);
+
+                        results += "<a href='" + data[3][i] + "' target='_blank'>" + data[1][i] + "</a><br>Lat: " +
+                            latLong.lat + " Long: " + latLong.lng + "<br>" + data[2][i] + "<br><br>";
+                    }
+                    map.fitBounds(bounds);
+                    map.panToBounds(bounds);
+                    $("#searchResults").html(results);
+                })
+                .fail(function() {
+                    alert("Could not get data");
+                });
+        }
+
+        function addMarker(location, title, url) {
+            if (location.lat != 0 && location.lng != 0) {
+                var newMarker = new google.maps.Marker({
+                    position: location,
+                    title: title,
+                    url: url,
+                    map: map
+                });
+                google.maps.event.addListener(newMarker, 'click', function() {
+                    window.open(this.url, '_blank');
+                });
+                markers.push(newMarker);
+                var loc = new google.maps.LatLng(newMarker.position.lat(), newMarker.position.lng());
+                bounds.extend(loc);
+            }
+        }
+
+        function clearMap() {
+            if (markers != null) {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+            }
+            markers = [];
+        }
+
+
+        function getLatLong(searchText) {
+            var LatLong = {
+                lat: 0,
+                lng: 0
+            };
+            $.ajax({
+                url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBYG8hqkzZlE5pxU_bU4d9OJlCbNcKqWh4&address=" + encodeURIComponent(searchText),
+                success: function(data) {
+                    console.log('data received');
+                    console.log(data);
+                    if (data.results.length > 0) {
+                        LatLong.lat = data.results[0].geometry.location.lat;
+                        LatLong.lng = data.results[0].geometry.location.lng;
+                    };
+                },
+                async: false
+            });
+            return LatLong;
+        }
+
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYG8hqkzZlE5pxU_bU4d9OJlCbNcKqWh4&callback=initMap" type="text/javascript"></script>
+</body>
+
+</html>

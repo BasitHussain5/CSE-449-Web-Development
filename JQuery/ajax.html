@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAK</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </style>
+</head>
+
+<body>
+
+
+    <script type="text/javascript">
+        $.ajax("info.txt").done(function(data){
+            alert(data);
+
+        }).fail(function(){
+            alert("Could not get data")
+        })
+
+  
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,63 @@
+<html>
+
+<head>
+
+    <title>AJAX</title>
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+
+</head>
+
+<body>
+    <input type="text" id="searchText" />
+    <button id="searchButton">SEARCH</button>
+
+    <p id="searchResultsHeader"></p>
+    <p id="searchResults"></p>
+
+    <script type="text/javascript">
+        //Code to bind click of search button
+        $("#searchButton").click(function() {
+            doSearch();
+        });
+
+        //Code to bind Enter key on text box to event
+        $("#searchText").keyup(function(e) {
+            if (e.keyCode == 13) {
+                $(this).trigger("enterKey");
+            }
+        });
+
+        //Code for Enter key on text box to auto search
+        $("#searchText").bind("enterKey", function(e) {
+            doSearch();
+        });
+
+        function doSearch() {
+            var searchVal = $("#searchText").val();
+            $.ajax({
+                    url: "https://en.wikipedia.org/w/api.php?format=jsonty&action=opensearch&search=" + encodeURIComponent(searchVal),
+                    data: {
+                        format: 'json'
+                    },
+                    dataType: 'jsonp'
+                }).done(function(data) {
+                    console.log('wikipedia data received');
+                    console.log(data);
+                    $("#searchResultsHeader").html("Results for '" + searchVal + "':");
+                    var results = "";
+                    for (var i = 0; i < data[1].length; i++) {
+                        results += "<a href='" + data[3][i] + "' target='_blank'>" + data[1][i] + "</a><br>" + data[2][i] + "<br><br>";
+                    }
+                    $("#searchResults").html(results);
+                })
+                .fail(function() {
+                    alert("Could not get data");
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>

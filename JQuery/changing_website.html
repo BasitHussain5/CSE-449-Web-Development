@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style type="text/css">
+        #circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: green;
+            margin: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="circle"></div>
+    <iframe src="https://www.cnn.com/"></iframe>
+
+    <script type="text/javascript">
+        // Ensure the jQuery script is included before using it
+        $(document).ready(function(){
+            $("#circle").hover(function(){
+                $("iframe").attr("src", "https://www.google.com");
+            });
+        });
+    </script>
+    
+</body>
+</html>
